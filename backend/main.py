@@ -7,6 +7,8 @@ Shapes are fixed in docs/API_CONTRACT.md.
 
 Run: uvicorn main:app --reload --port 8000
 """
+import os
+
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
@@ -20,12 +22,18 @@ import simulator as sim
 from stories import STORIES
 
 app = FastAPI(title="MerchantPulse AI")
+# FRONTEND_URL = the deployed dashboard (e.g. the Vercel URL); comma-separate several
+FRONTEND_URLS = [u.strip().rstrip("/") for u in os.getenv("FRONTEND_URL", "").split(",") if u.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", *FRONTEND_URLS],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# A fresh server (e.g. a cloud deploy) has no database yet: build the demo data once
+if not os.path.exists(db.DB_PATH):
+    db.write(sim.build())
 
 FESTIVAL_ID = "C-FESTIVAL"
 _scan: dict | None = None
