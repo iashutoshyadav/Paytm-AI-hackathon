@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* Colours match the pitch deck */
+@theme inline {
+  --color-navy: #0b1f3a;
+  --color-navy-2: #13294b;
+  --color-navy-3: #1d3a63;
+  --color-cyan: #00b9f1;
+  --color-cyan-ink: #0089b8;
+  --color-cyan-soft: #e0f6fd;
+  --color-orange: #f5a623;
+  --color-orange-ink: #b86e00;
+  --color-red: #e5484d;
+  --color-green: #2bb673;
+  --color-green-ink: #16865a;
+  --color-violet: #6243e0;
+  --color-ink: #0b1f3a;
+  --color-muted: #5b6b82;
+  --color-line: #dde4ee;
+  --color-panel: #f3f6fa;
+  --color-ground: #eef2f7;
+  --color-wa: #dcf8c6;
+  --color-wa-bar: #075e54;
+  --font-sans: var(--font-lato);
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* WhatsApp-style chat wallpaper */
+.wa-wall {
+  background-color: #ece5dd;
+  background-image: radial-gradient(rgba(11, 31, 58, 0.06) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+/* Heartbeat line on the landing screen */
+/* The polyline sets pathLength="1", so the dash covers the whole line however wide it is stretched */
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.pulse-draw {
+  stroke-dasharray: 1;
+  animation: draw 2.4s ease-out both;
+}
+
+/* Gentle entrance for panels. Movement only, never opacity: content is fully visible at every frame */
+@keyframes rise {
+  from { transform: translateY(6px); }
+  to { transform: none; }
+}
+.rise {
+  animation: rise 0.35s ease-out both;
+}
+
+/* A number that just changed */
+@keyframes flash {
+  0% { background: rgba(0, 185, 241, 0.35); }
+  100% { background: transparent; }
+}
+.flash {
+  animation: flash 1.6s ease-out;
+  border-radius: 6px;
+}
+
+/* Typing dots */
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+.typing span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 1.5px;
+  border-radius: 50%;
+  background: var(--color-muted);
+  animation: blink 1.2s infinite;
+}
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
+
+/* Live status dot */
+@keyframes ping {
+  0% { box-shadow: 0 0 0 0 rgba(43, 182, 115, 0.6); }
+  100% { box-shadow: 0 0 0 8px rgba(43, 182, 115, 0); }
+}
+.live-dot {
+  animation: ping 1.8s infinite;
+}
+
+/* Skeleton loading */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--color-panel) 0%, #e6ecf3 50%, var(--color-panel) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-draw, .rise, .flash, .typing span, .live-dot, .skeleton {
+    animation: none;
+  }
+  .pulse-draw { stroke-dasharray: none; }
+}
