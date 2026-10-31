@@ -85,15 +85,23 @@ export default function Home() {
     api.health().then((h) => setSarvam(h.sarvam_key_set)).catch(() => setSarvam(null));
     const params = new URLSearchParams(window.location.search);
     if (params.has("autorun")) {
+      // One-off kick-off from the URL on first load (used for screenshots and the backup video)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       runAgent().then(() => params.get("case") && setSelected(params.get("case")));
     }
   }, []);
 
   useEffect(() => {
     if (!selected) return;
-    setDetail(null);
     api.caseDetail(selected).then(setDetail).catch(() => setError("Could not load case"));
   }, [selected]);
+
+  // Clear the old case right away so the skeleton shows while the new one loads
+  function openCase(id: string) {
+    if (id === selected) return;
+    setDetail(null);
+    setSelected(id);
+  }
 
   // After a chat message or a decision the backend may have changed the case, the queue and the impact
   async function refreshAll() {
@@ -175,7 +183,7 @@ export default function Home() {
                       {gi !== 0 && <div className="mb-2" />}
                       <div className="space-y-2">
                         {items.map((c) => (
-                          <CaseCard key={c.id} c={c} active={selected === c.id} onClick={() => setSelected(c.id)} />
+                          <CaseCard key={c.id} c={c} active={selected === c.id} onClick={() => openCase(c.id)} />
                         ))}
                       </div>
                     </div>

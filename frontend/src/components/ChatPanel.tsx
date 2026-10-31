@@ -39,9 +39,12 @@ export default function ChatPanel({ caseId, ownerName, initial, suggestions = []
     audio.current = null;
   }, [caseId]);
 
-  useEffect(() => {
+  // When the backend sends a fresh chat (new case or after a refresh), show it: adjusted during render, not in an effect
+  const [shownInitial, setShownInitial] = useState(initial);
+  if (initial !== shownInitial) {
+    setShownInitial(initial);
     setMessages(initial);
-  }, [caseId, initial]);
+  }
   // Scroll only the chat box, never the whole page
   useEffect(() => {
     thread.current?.scrollTo({ top: thread.current.scrollHeight, behavior: "smooth" });
